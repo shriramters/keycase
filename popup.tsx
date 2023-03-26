@@ -1,10 +1,22 @@
 import Button from "~components/Button"
 import { useFirebase } from "~firebase/hook"
+import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 
 import "./style.css"
 
+interface AuthFirebaseDocument {
+  masterPasswordSalt: string
+  encryptedRSAPrivateKey: string
+  RSAPublicKey: string
+  masterPasswordHash: string
+}
+
 export default function IndexPopup() {
   const { user, isLoading, onLogin, onLogout } = useFirebase()
+
+  const { data: authData } = useFirestoreDoc<AuthFirebaseDocument>(
+    user?.uid && `auth/${user.uid}`
+  )
 
   return (
     <div id="popup-body">
@@ -20,15 +32,7 @@ export default function IndexPopup() {
       </header>
       <hr />
       <div>
-        {isLoading ? "Loading..." : ""}
-        {!!user ? (
-          <div>
-            Welcome to keycase, {user.displayName} your email address is{" "}
-            {user.email}
-          </div>
-        ) : (
-          ""
-        )}
+        {isLoading ? "Loading..." : authData?.masterPasswordSalt ?? "No"}
       </div>
       <hr />
       <footer>

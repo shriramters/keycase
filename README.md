@@ -31,3 +31,22 @@ This should create a production bundle for your extension, ready to be zipped an
 ## Submit to the webstores
 
 The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+
+## Firebase 
+
+In order to host this app, you must first set up a firebase project. Then you,
+- Create a web app on firebase
+- Enable Firebase Authentication
+- Enable Cloud Firestore with the following rules:
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+- Enter the details specified in the `example.env` file into a `.env.development` file in the root of the project
+
