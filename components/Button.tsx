@@ -1,11 +1,13 @@
 interface ButtonProps {
   children?: React.ReactNode
+  type?: "button" | "submit" | "reset"
   onClick?: () => void
 }
 
-const Button = ({ children, onClick }: ButtonProps) => {
+const Button = ({ children, type, onClick }: ButtonProps) => {
   return (
     <button
+      type={type || "button"}
       onClick={onClick}
       style={{
         backgroundColor: "teal",

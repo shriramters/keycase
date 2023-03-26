@@ -1,22 +1,31 @@
+import { useEffect, useState } from "react"
+
 import Button from "~components/Button"
+import Onboard from "~components/Onboard"
 import { useFirebase } from "~firebase/hook"
 import { useFirestoreDoc } from "~firebase/use-firestore-doc"
+import type { AuthFirebaseDocument } from "~models/AuthData"
 
 import "./style.css"
-
-interface AuthFirebaseDocument {
-  masterPasswordSalt: string
-  encryptedRSAPrivateKey: string
-  RSAPublicKey: string
-  masterPasswordHash: string
-}
 
 export default function IndexPopup() {
   const { user, isLoading, onLogin, onLogout } = useFirebase()
 
-  const { data: authData } = useFirestoreDoc<AuthFirebaseDocument>(
-    user?.uid && `auth/${user.uid}`
-  )
+  const [onboarding, setOnboarding] = useState<boolean>(false)
+
+  const {
+    data: authData,
+    setData: setAuthData,
+    isReady: isAuthReady
+  } = useFirestoreDoc<AuthFirebaseDocument>(user?.uid && `auth/${user.uid}`)
+
+  // if user does not have an auth document, create one
+  useEffect(() => {
+    if (user && !authData) {
+      setOnboarding(true)
+      console.log("authData", authData)
+    }
+  }, [isAuthReady])
 
   return (
     <div id="popup-body">
@@ -32,7 +41,25 @@ export default function IndexPopup() {
       </header>
       <hr />
       <div>
-        {isLoading ? "Loading..." : authData?.masterPasswordSalt ?? "No"}
+        {onboarding ? (
+          <Onboard
+            setOnboarding={setOnboarding}
+            setAuthData={setAuthData}
+            user={user}
+          />
+        ) : (
+          <div>
+            {isLoading ? "Loading..." : ""}
+            {!!user ? (
+              <div>
+                Welcome to Keycase, {user.displayName} your email address is{" "}
+                {user.email}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+        )}
       </div>
       <hr />
       <footer>
