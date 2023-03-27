@@ -6,7 +6,7 @@ import React from "react"
 import type { AuthFirebaseDocument } from "~models/AuthData"
 
 import Button from "./Button"
-import { aes_encrypt, deriveKey } from "./cryptography"
+import { ab2str, aes_encrypt, deriveKey, sha256hash } from "./cryptography"
 
 interface OnboardProps {
   setOnboarding: React.Dispatch<React.SetStateAction<boolean>>
@@ -36,6 +36,7 @@ const Onboard = ({ setOnboarding, user, setAuthData }: OnboardProps) => {
     const authData = await makeAuthDocument(masterPassword)
 
     setAuthData(authData)
+    setOnboarding(false)
   }
 
   return (
@@ -95,9 +96,9 @@ async function makeAuthDocument(masterPassword: string) {
     key
   )
 
-  const hashedPassword = await window.crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(masterPassword + ab2str(salt))
+  const hashedPassword = await sha256hash(
+    masterPassword,
+    window.btoa(ab2str(salt))
   )
 
   const authData: AuthFirebaseDocument = {
@@ -108,10 +109,4 @@ async function makeAuthDocument(masterPassword: string) {
   }
 
   return authData
-}
-
-// util functions
-
-function ab2str(buf) {
-  return String.fromCharCode.apply(null, new Uint8Array(buf))
 }

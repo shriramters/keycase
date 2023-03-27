@@ -53,3 +53,16 @@ export async function aes_decrypt(
     return null
   }
 }
+
+export function sha256hash(data: string, salt: string) {
+  return window.crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(data + salt)
+  )
+}
+
+// util functions
+
+export function ab2str(buf: ArrayBuffer) {
+  return String.fromCharCode.apply(null, new Uint8Array(buf))
+}

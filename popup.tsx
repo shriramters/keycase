@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 import Button from "~components/Button"
 import Onboard from "~components/Onboard"
+import PasswordStore from "~components/PasswordStore"
 import { useFirebase } from "~firebase/hook"
 import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 import type { AuthFirebaseDocument } from "~models/AuthData"
@@ -51,12 +52,9 @@ export default function IndexPopup() {
           <div>
             {isLoading ? "Loading..." : ""}
             {!!user ? (
-              <div>
-                Welcome to Keycase, {user.displayName} your email address is{" "}
-                {user.email}
-              </div>
+              <PasswordStore authData={authData} />
             ) : (
-              ""
+              "Login to continue. "
             )}
           </div>
         )}
