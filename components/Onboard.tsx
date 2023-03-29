@@ -5,8 +5,13 @@ import React from "react"
 
 import type { AuthFirebaseDocument } from "~models/AuthData"
 
-import Button from "./Button"
-import { ab2str, aes_encrypt, deriveKey, sha256hash } from "./cryptography"
+import {
+  ab2str,
+  deriveKey,
+  generateRSAPair,
+  sha256hash,
+  wrapKey
+} from "./cryptography"
 
 interface OnboardProps {
   setOnboarding: React.Dispatch<React.SetStateAction<boolean>>
@@ -56,7 +61,7 @@ const Onboard = ({ setOnboarding, user, setAuthData }: OnboardProps) => {
           onChange={onMasterPasswordConfirmChange}
         />
         <div>
-          <Button type="submit">Submit</Button>
+          <button type="submit">Submit</button>
         </div>
       </form>
     </div>
@@ -70,31 +75,14 @@ async function makeAuthDocument(masterPassword: string) {
   const salt = window.crypto.getRandomValues(new Uint8Array(16))
   const iv = window.crypto.getRandomValues(new Uint8Array(12))
   const key = await deriveKey(masterPassword, salt)
-  const rsaPair = await window.crypto.subtle.generateKey(
-    {
-      name: "RSA-OAEP",
-      modulusLength: 4096,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256"
-    },
-    true,
-    ["encrypt", "decrypt"]
-  )
+  const rsaPair = await generateRSAPair()
   const rsaPublicKey = await window.crypto.subtle.exportKey(
     "spki",
     rsaPair.publicKey
   )
 
-  const rsaPrivateKey = await window.crypto.subtle.exportKey(
-    "pkcs8",
-    rsaPair.privateKey
-  )
-
-  const encryptedPrivateKey = await aes_encrypt(
-    window.btoa(ab2str(rsaPrivateKey)),
-    iv,
-    key
-  )
+  // wrap the private key with the derived key
+  const encryptedPrivateKey = await wrapKey(key, rsaPair.privateKey, iv)
 
   const hashedPassword = await sha256hash(
     masterPassword,

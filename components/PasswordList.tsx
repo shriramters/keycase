@@ -2,9 +2,10 @@ import type { User } from "firebase/auth"
 import React, { useEffect } from "react"
 
 import { useFirestoreDoc } from "~firebase/use-firestore-doc"
-import type { PasswordsFirebaseDocument } from "~models/Passwords"
+import type { Password, PasswordsFirebaseDocument } from "~models/Passwords"
 
 import NewPassword from "./NewPassword"
+import PasswordListItem from "./PasswordListItem"
 import PasswordView from "./PasswordView"
 
 interface PasswordListProps {
@@ -40,6 +41,8 @@ const PasswordList = ({ user }: PasswordListProps) => {
     }
   }, [isListReady])
 
+  const [openPassword, setOpenPassword] = React.useState<string | null>(null)
+
   return (
     <div>
       {addNew ? (
@@ -49,10 +52,23 @@ const PasswordList = ({ user }: PasswordListProps) => {
         />
       ) : (
         <>
-          <button onClick={() => setAddNew(true)}>Add New</button>
-          {passwordList?.passwords.map((refId, index) => (
-            <PasswordView refId={refId} />
-          ))}
+          {!!openPassword ? (
+            <PasswordView
+              refId={openPassword}
+              setOpenPassword={setOpenPassword}
+            />
+          ) : (
+            <>
+              <button onClick={() => setAddNew(true)}>Add New</button>
+              {passwordList?.passwords.map((refId, index) => (
+                <PasswordListItem
+                  index={index}
+                  refId={refId}
+                  setOpenPassword={setOpenPassword}
+                />
+              ))}
+            </>
+          )}
         </>
       )}
     </div>

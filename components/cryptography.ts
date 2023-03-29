@@ -23,36 +23,57 @@ export async function deriveKey(masterPassword: string, salt: ArrayBuffer) {
     keyMaterial,
     { name: "AES-GCM", length: 256 },
     true,
+    ["wrapKey", "unwrapKey"]
+  )
+}
+
+export async function generateRSAPair() {
+  return window.crypto.subtle.generateKey(
+    {
+      name: "RSA-OAEP",
+      modulusLength: 4096,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256"
+    },
+    true,
     ["encrypt", "decrypt"]
   )
 }
 
-export function aes_encrypt(plaintext: string, iv: ArrayBuffer, key: CryptoKey) {
-  const encoder = new TextEncoder()
-  const encoded = encoder.encode(plaintext)
-  return window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded)
+export async function wrapKey(keyToWrap: CryptoKey, aes_key: CryptoKey, iv: ArrayBuffer) {
+  return await window.crypto.subtle.wrapKey(
+    "pkcs8",
+    keyToWrap,
+    aes_key,
+    {
+      name: "AES-GCM",
+      iv
+    }
+  )
 }
 
-export async function aes_decrypt(
-  ciphertext: ArrayBuffer,
-  iv: ArrayBuffer,
-  key: CryptoKey
+export async function unwrapKey(
+  wrappedKey: ArrayBuffer,
+  aes_key: CryptoKey,
+  iv: ArrayBuffer
 ) {
-  try {
-    let decrypted = await window.crypto.subtle.decrypt(
-      {
-        name: "AES-GCM",
-        iv: iv
-      },
-      key,
-      ciphertext
-    )
-    let decoder = new TextDecoder()
-    return decoder.decode(decrypted)
-  } catch (e) {
-    return null
-  }
+  return await window.crypto.subtle.unwrapKey(
+    "pkcs8",
+    wrappedKey,
+    aes_key,
+    {
+      name: "AES-GCM",
+      iv
+    },
+    {
+      name: "RSA-OAEP",
+      hash: "SHA-256"
+    },
+    true,
+    ["decrypt"]
+  )
 }
+
 
 export function sha256hash(data: string, salt: string) {
   return window.crypto.subtle.digest(
@@ -82,8 +103,19 @@ export async function rsa_decrypt(data: ArrayBuffer, key: CryptoKey) {
   return new TextDecoder().decode(decrypted_ab)
 }
 
+
+
 // util functions
 
 export function ab2str(buf: ArrayBuffer) {
   return String.fromCharCode.apply(null, new Uint8Array(buf))
+}
+
+export function str2ab(str: string) {
+  const buf = new ArrayBuffer(str.length)
+  const bufView = new Uint8Array(buf)
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i)
+  }
+  return buf
 }

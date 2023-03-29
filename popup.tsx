@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 
-import Button from "~components/Button"
 import Onboard from "~components/Onboard"
 import PasswordStore from "~components/PasswordStore"
 import { useFirebase } from "~firebase/hook"
@@ -35,9 +34,9 @@ export default function IndexPopup() {
           Keycase
         </h1>
         {!user ? (
-          <Button onClick={() => onLogin()}>Log&nbsp;in</Button>
+          <button onClick={() => onLogin()}>Log&nbsp;in</button>
         ) : (
-          <Button onClick={() => onLogout()}>Log&nbsp;out</Button>
+          <button onClick={() => onLogout()}>Log&nbsp;out</button>
         )}
       </header>
       <hr />
