@@ -1,18 +1,21 @@
+import type { User } from "firebase/auth"
 import React from "react"
 
 import type { AuthFirebaseDocument } from "~models/AuthData"
 
-import type { Password } from "../models/Password"
+import type { Password } from "../models/Passwords"
 import Button from "./Button"
+import PasswordList from "./PasswordList"
 import { ab2str, deriveKey, sha256hash } from "./cryptography"
 
 interface PasswordStoreProps {
   authData: AuthFirebaseDocument
+  user: User
 }
 
 // Used to retrieve all the stored passwords
 // from firebase and display them in a list once the master password is entered
-const PasswordStore = ({ authData }: PasswordStoreProps) => {
+const PasswordStore = ({ authData, user }: PasswordStoreProps) => {
   const [masterPassword, setMasterPassword] = React.useState("")
   const [passwords, setPasswords] = React.useState<Password[]>([])
   const [error, setError] = React.useState<string | null>(null)
@@ -52,7 +55,7 @@ const PasswordStore = ({ authData }: PasswordStoreProps) => {
   return (
     <div id="password-store">
       {authenticated ? (
-        "Authenticated!"
+        <PasswordList user={user} />
       ) : (
         <form onSubmit={onMasterPasswordSubmit}>
           {error && <div className="error">{error}</div>}

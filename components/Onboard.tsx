@@ -105,7 +105,8 @@ async function makeAuthDocument(masterPassword: string) {
     RSAPublicKey: window.btoa(ab2str(rsaPublicKey)),
     encryptedRSAPrivateKey: window.btoa(ab2str(encryptedPrivateKey)),
     masterPasswordSalt: window.btoa(ab2str(salt)),
-    masterPasswordHash: window.btoa(ab2str(hashedPassword))
+    masterPasswordHash: window.btoa(ab2str(hashedPassword)),
+    iv: window.btoa(ab2str(iv))
   }
 
   return authData

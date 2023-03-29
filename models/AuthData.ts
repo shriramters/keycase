@@ -10,4 +10,5 @@ export interface AuthFirebaseDocument {
     encryptedRSAPrivateKey: string
     RSAPublicKey: string
     masterPasswordHash: string
+    iv : string
   }

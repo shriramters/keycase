@@ -61,6 +61,27 @@ export function sha256hash(data: string, salt: string) {
   )
 }
 
+export function rsa_encrypt(data: string, key: CryptoKey) {
+  return window.crypto.subtle.encrypt(
+    {
+      name: "RSA-OAEP"
+    },
+    key,
+    new TextEncoder().encode(data)
+  )
+}
+
+export async function rsa_decrypt(data: ArrayBuffer, key: CryptoKey) {
+  const decrypted_ab = await window.crypto.subtle.decrypt(
+    {
+      name: "RSA-OAEP"
+    },
+    key,
+    data
+  )
+  return new TextDecoder().decode(decrypted_ab)
+}
+
 // util functions
 
 export function ab2str(buf: ArrayBuffer) {

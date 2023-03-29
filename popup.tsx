@@ -50,9 +50,10 @@ export default function IndexPopup() {
           />
         ) : (
           <div>
-            {isLoading ? "Loading..." : ""}
-            {!!user ? (
-              <PasswordStore authData={authData} />
+            {isLoading ? (
+              "Loading..."
+            ) : !!user ? (
+              <PasswordStore authData={authData} user={user} />
             ) : (
               "Login to continue. "
             )}
