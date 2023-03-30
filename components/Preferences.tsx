@@ -10,9 +10,9 @@ const Preferences = ({
   const { theme, setTheme } = React.useContext(ThemeContext)
 
   return (
-    <div>
+    <div id="preferences-page">
       <div className="title-bar">
-        <h3>Preferences</h3>
+        <h1>Preferences</h1>
         <button onClick={() => openPreferencesPage(false)}>Back</button>
       </div>
       <dl>

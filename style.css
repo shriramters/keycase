@@ -37,6 +37,14 @@ header {
   gap: 6rem;
 }
 
+#preferences-page > .title-bar {
+  gap: 4.5rem;
+}
+h1 {
+  font-family: "Space Grotesk";
+  font-weight: 400;
+}
+
 #onboarding {
   width: 100%;
 }

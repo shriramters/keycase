@@ -70,7 +70,7 @@ export default function IndexPopup() {
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <div id="popup-body">
         <div id="toolbar">
-          <div onClick={() => setPreferencesPage(true)}>
+          <div onClick={() => setPreferencesPage((prev) => !prev)}>
             <svg
               id="preferences-icon"
               xmlns="http://www.w3.org/2000/svg"
@@ -86,49 +86,55 @@ export default function IndexPopup() {
             </svg>
           </div>
         </div>
-        <header>
-          <h1 style={{ fontFamily: "Space Grotesk", fontWeight: 400 }}>
-            Keycase
-          </h1>
-          {!user ? (
-            <button onClick={() => onLogin()}>Log&nbsp;in</button>
-          ) : (
-            <button onClick={() => onLogout()}>Log&nbsp;out</button>
-          )}
-        </header>
-        <hr />
-        <div>
-          {preferencesPage ? (
-            <Preferences openPreferencesPage={setPreferencesPage} />
-          ) : onboarding ? (
-            <Onboard
-              setOnboarding={setOnboarding}
-              setAuthData={setAuthData}
-              user={user}
-            />
-          ) : (
-            <div>
-              {isLoading ? (
-                "Loading..."
-              ) : !!user ? (
-                <PasswordStore authData={authData} user={user} />
+        {preferencesPage ? (
+          <Preferences openPreferencesPage={setPreferencesPage} />
+        ) : (
+          <>
+            {" "}
+            <header>
+              <h1 style={{ fontFamily: "Space Grotesk", fontWeight: 400 }}>
+                Keycase
+              </h1>
+              {!user ? (
+                <button onClick={() => onLogin()}>Log&nbsp;in</button>
               ) : (
-                "Login to continue. "
+                <button onClick={() => onLogout()}>Log&nbsp;out</button>
+              )}
+            </header>
+            <hr />
+            <div>
+              {onboarding ? (
+                <Onboard
+                  setOnboarding={setOnboarding}
+                  setAuthData={setAuthData}
+                  user={user}
+                />
+              ) : (
+                <div>
+                  {isLoading ? (
+                    "Loading..."
+                  ) : !!user ? (
+                    <PasswordStore authData={authData} user={user} />
+                  ) : (
+                    "Login to continue. "
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        <hr />
-        <footer>
-          <small>
-            This web extension is licensed under the GPLv3. Find the source code{" "}
-            <a
-              target="_blank"
-              href="https://github.com/shriramters/keycase.git">
-              here
-            </a>{" "}
-          </small>
-        </footer>
+            <hr />
+            <footer>
+              <small>
+                This web extension is licensed under the GPLv3. Find the source
+                code{" "}
+                <a
+                  target="_blank"
+                  href="https://github.com/shriramters/keycase.git">
+                  here
+                </a>{" "}
+              </small>
+            </footer>
+          </>
+        )}
       </div>
     </ThemeContext.Provider>
   )
