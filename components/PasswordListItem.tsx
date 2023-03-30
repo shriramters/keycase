@@ -3,6 +3,8 @@ import React from "react"
 import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 import type { Password } from "~models/Passwords"
 
+import { PasswordsContext } from "./PasswordList"
+
 interface PasswordListItemProps {
   index: number
   refId: string
@@ -14,7 +16,19 @@ const PasswordListItem = ({
   refId,
   setOpenPassword
 }: PasswordListItemProps) => {
-  const { data: password } = useFirestoreDoc<Password>(`passwords/${refId}`)
+  const { data: password, isReady: isPasswordReady } =
+    useFirestoreDoc<Password>(`passwords/${refId}`)
+  // use password context to append the password to the list
+  const { passwords, setPasswords } = React.useContext(PasswordsContext)
+
+  React.useEffect(() => {
+    if (password) {
+      const passwordData = { password, refId }
+      if (!passwords) setPasswords([passwordData])
+      else setPasswords([...passwords, passwordData])
+    }
+  }, [isPasswordReady])
+
   const website = password?.url.split("://")[1].split("/")[0]
   return (
     <div

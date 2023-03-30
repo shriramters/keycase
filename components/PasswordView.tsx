@@ -10,6 +10,50 @@ interface PasswordViewProps {
 
 const PasswordView = ({ refId, setOpenPassword }: PasswordViewProps) => {
   const { data: password } = useFirestoreDoc<Password>(`passwords/${refId}`)
+
+  const showPassword = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const input = document.querySelector(
+      "input[type=password]"
+    ) as HTMLInputElement
+    input.type = "text"
+  }
+
+  const hidePassword = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const input = document.querySelector("#password-field") as HTMLInputElement
+    input.type = "password"
+  }
+
+  // parameter can be either password or username
+  const copyToClipboard = (target: "password" | "username") => {
+    if (target === "password") {
+      const input = document.querySelector(
+        "#password-field"
+      ) as HTMLInputElement
+      navigator.clipboard.writeText(input.value)
+      //set copied to true
+      const copyButton = document.querySelector(
+        "#copy-password"
+      ) as HTMLButtonElement
+      copyButton.innerText = "Copied!"
+      setTimeout(() => {
+        copyButton.innerText = "Copy"
+      }, 2000)
+    } else {
+      const input = document.querySelector(
+        "#username-field"
+      ) as HTMLInputElement
+      navigator.clipboard.writeText(input.value)
+      //set copied to true
+      const copyButton = document.querySelector(
+        "#copy-username"
+      ) as HTMLButtonElement
+      copyButton.innerText = "Copied!"
+      setTimeout(() => {
+        copyButton.innerText = "Copy"
+      }, 2000)
+    }
+  }
+
   return (
     <div>
       <dl>
@@ -17,19 +61,36 @@ const PasswordView = ({ refId, setOpenPassword }: PasswordViewProps) => {
         <dd>{password?.name}</dd>
         <dt>Username</dt>
         <dd>
-          {" "}
-          <input type="text" value={password?.username} readOnly />
+          <input
+            type="text"
+            value={password?.username}
+            id="username-field"
+            readOnly
+          />
           <button
-            onClick={() => navigator.clipboard.writeText(password?.username)}>
+            id="copy-username"
+            onClick={() => copyToClipboard("username")}>
             Copy
           </button>
         </dd>
         <dt>Password</dt>
         <dd>
           <>
-            <input type="password" value={password?.password} readOnly />
+            <input
+              type="password"
+              id="password-field"
+              value={password?.password}
+              readOnly
+            />
             <button
-              onClick={() => navigator.clipboard.writeText(password?.password)}>
+              onMouseLeave={hidePassword}
+              onMouseUp={hidePassword}
+              onMouseDown={showPassword}>
+              Show
+            </button>
+            <button
+              id="copy-password"
+              onClick={() => copyToClipboard("password")}>
               Copy
             </button>
           </>

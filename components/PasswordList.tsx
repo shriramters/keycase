@@ -8,6 +8,13 @@ import NewPassword from "./NewPassword"
 import PasswordListItem from "./PasswordListItem"
 import PasswordView from "./PasswordView"
 
+export const PasswordsContext = React.createContext<{
+  passwords: { password: Password; refId: string }[]
+  setPasswords: React.Dispatch<
+    React.SetStateAction<{ password: Password; refId: string }[]>
+  >
+} | null>(null)
+
 interface PasswordListProps {
   user: User
 }
@@ -32,6 +39,11 @@ const PasswordList = ({ user }: PasswordListProps) => {
   }
 
   const [addNew, setAddNew] = React.useState<boolean>(false)
+  const [searchQuery, setSearchQuery] = React.useState<string>("")
+
+  const [passwords, setPasswords] = React.useState<
+    { password: Password; refId: string }[] | null
+  >(null)
 
   useEffect(() => {
     if (user && !passwordList) {
@@ -58,16 +70,40 @@ const PasswordList = ({ user }: PasswordListProps) => {
               setOpenPassword={setOpenPassword}
             />
           ) : (
-            <>
-              <button onClick={() => setAddNew(true)}>Add New</button>
-              {passwordList?.passwords.map((refId, index) => (
-                <PasswordListItem
-                  index={index}
-                  refId={refId}
-                  setOpenPassword={setOpenPassword}
+            <PasswordsContext.Provider value={{ passwords, setPasswords }}>
+              <div className="title-bar">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchQuery(e.target.value)
+                  }
                 />
-              ))}
-            </>
+                <button onClick={() => setAddNew(true)}>Add New</button>
+              </div>
+              {passwordList?.passwords
+                .filter((refId) => {
+                  if (searchQuery === "") return true
+                  const password = passwords?.find(
+                    (password) => password.refId === refId
+                  )?.password
+                  if (!password) return false
+                  const website = password.url.split("://")[1].split("/")[0]
+                  return (
+                    website.includes(searchQuery) ||
+                    password.username.includes(searchQuery) ||
+                    password.name.includes(searchQuery)
+                  )
+                })
+                .map((refId, index) => (
+                  <PasswordListItem
+                    key={index}
+                    index={index}
+                    refId={refId}
+                    setOpenPassword={setOpenPassword}
+                  />
+                ))}
+            </PasswordsContext.Provider>
           )}
         </>
       )}

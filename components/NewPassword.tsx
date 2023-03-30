@@ -44,7 +44,10 @@ const NewPassword = ({ setOpen, addPasswordToList }: NewPasswordProps) => {
 
   return (
     <div>
-      <h3>New Password</h3>
+      <div className="title-bar">
+        <h3>New Password</h3>
+        <button onClick={() => setOpen(false)}>Back</button>
+      </div>
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Name" name="name" />
         <input type="text" placeholder="Username" name="username" />
