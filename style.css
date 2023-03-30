@@ -1,5 +1,30 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 
+:root {
+  --text-color: #000;
+  --surface: #fff;
+  --surface-hover: #eee;
+  --accent-color: thistle;
+  --accent-color-hover: plum;
+  --font-size: 75%;
+}
+
+/* dark theme */
+
+body.sakura-night {
+  --text-color: #fff;
+  --surface: #505477;
+  --surface-hover: #616c99;
+  --accent-color: plum;
+  --accent-color-hover: thistle;
+}
+
+body {
+  background-color: var(--surface);
+  color: var(--text-color);
+  font-size: var(--font-size);
+}
+
 #popup-body {
   padding: 0.5rem;
 }
@@ -23,24 +48,41 @@ form {
 
 input {
   padding: 0.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--accent-color);
   border-radius: 0.25rem;
+  background-color: var(--surface-hover);
+  color: var(--text-color);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent-color-hover);
+}
+
+input::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
 }
 
 button {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 0.25rem;
-  background-color: #eee;
   font-family: "Space Grotesk", sans-serif;
   font-weight: 400;
   font-size: 0.75rem;
   cursor: pointer;
-  background-color: thistle;
+  background-color: var(--accent-color);
+  color: var(--text-color);
 }
 
 button:hover {
-  background-color: plum;
+  background-color: var(--accent-color-hover);
 }
 
 h3 {
@@ -67,6 +109,15 @@ dd {
   gap: 0.5rem;
 }
 
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--accent-color);
+  border-radius: 0.25rem;
+  color: var(--text-color);
+  background-color: var(--surface-hover);
+}
+
 .error {
   color: red;
 }
@@ -89,5 +140,23 @@ dd {
 }
 
 .password-list-item:hover {
-  background-color: #eee;
+  background-color: var(--surface-hover);
+}
+
+#preferences-icon {
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  width: 1rem;
+  color: var(--accent-color);
+  stroke-width: 1px;
+}
+
+#preferences-icon:hover {
+  color: var(--accent-color-hover);
+}
+
+#toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
