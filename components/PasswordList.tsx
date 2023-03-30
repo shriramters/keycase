@@ -1,19 +1,14 @@
 import type { User } from "firebase/auth"
-import React, { useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 
 import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 import type { Password, PasswordsFirebaseDocument } from "~models/Passwords"
 
 import NewPassword from "./NewPassword"
 import PasswordListItem from "./PasswordListItem"
+import { KeyContext } from "./PasswordStore"
 import PasswordView from "./PasswordView"
-
-export const PasswordsContext = React.createContext<{
-  passwords: { password: Password; refId: string }[]
-  setPasswords: React.Dispatch<
-    React.SetStateAction<{ password: Password; refId: string }[]>
-  >
-} | null>(null)
+import { rsa_decrypt, str2ab } from "./cryptography"
 
 interface PasswordListProps {
   user: User
@@ -25,15 +20,15 @@ const PasswordList = ({ user }: PasswordListProps) => {
     setData: setPasswordList,
     isReady: isListReady
   } = useFirestoreDoc<PasswordsFirebaseDocument>(
-    user?.uid && `userpasswords/${user.uid}`
+    user?.uid && `passwords/${user.uid}`
   )
 
   function addPasswordToList(_data: string) {
     if (passwordList) {
-      const passwords = passwordList.passwords
-      passwords.push(_data)
+      const passwordsArray = passwordList.passwords
+      passwordsArray.push(_data)
       setPasswordList({
-        passwords
+        passwords: passwordsArray
       })
     }
   }
@@ -41,19 +36,34 @@ const PasswordList = ({ user }: PasswordListProps) => {
   const [addNew, setAddNew] = React.useState<boolean>(false)
   const [searchQuery, setSearchQuery] = React.useState<string>("")
 
-  const [passwords, setPasswords] = React.useState<
-    { password: Password; refId: string }[] | null
-  >(null)
+  const [passwords, setPasswords] = React.useState<Password[]>([])
+
+  const rsaPair = useContext(KeyContext)
 
   useEffect(() => {
     if (user && !passwordList) {
       setPasswordList({
         passwords: []
       })
+    } else if (passwordList) {
+      const passwordsArray = passwordList.passwords
+      passwordsArray
+        .map(async (encryptedPassword) => {
+          const password = await rsa_decrypt(
+            str2ab(window.atob(encryptedPassword)),
+            rsaPair.privateKey
+          )
+          return password
+        })
+        .forEach((password) => {
+          password.then((decypted) =>
+            setPasswords((prev) => [...prev, JSON.parse(decypted)])
+          )
+        })
     }
-  }, [isListReady])
+  }, [isListReady, addNew])
 
-  const [openPassword, setOpenPassword] = React.useState<string | null>(null)
+  const [openPassword, setOpenPassword] = React.useState<Password | null>(null)
 
   return (
     <div>
@@ -66,11 +76,11 @@ const PasswordList = ({ user }: PasswordListProps) => {
         <>
           {!!openPassword ? (
             <PasswordView
-              refId={openPassword}
+              password={openPassword}
               setOpenPassword={setOpenPassword}
             />
           ) : (
-            <PasswordsContext.Provider value={{ passwords, setPasswords }}>
+            <>
               <div className="title-bar">
                 <input
                   type="text"
@@ -81,29 +91,27 @@ const PasswordList = ({ user }: PasswordListProps) => {
                 />
                 <button onClick={() => setAddNew(true)}>Add New</button>
               </div>
-              {passwordList?.passwords
-                .filter((refId) => {
+              {passwords
+                .filter((password) => {
                   if (searchQuery === "") return true
-                  const password = passwords?.find(
-                    (password) => password.refId === refId
-                  )?.password
-                  if (!password) return false
+                  alert(password.url)
                   const website = password.url.split("://")[1].split("/")[0]
                   return (
                     website.includes(searchQuery) ||
                     password.username.includes(searchQuery) ||
-                    password.name.includes(searchQuery)
+                    password.name.includes(searchQuery) ||
+                    password.notes.includes(searchQuery)
                   )
                 })
-                .map((refId, index) => (
+                .map((password, index) => (
                   <PasswordListItem
                     key={index}
                     index={index}
-                    refId={refId}
+                    password={password}
                     setOpenPassword={setOpenPassword}
                   />
                 ))}
-            </PasswordsContext.Provider>
+            </>
           )}
         </>
       )}

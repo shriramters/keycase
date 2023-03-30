@@ -17,7 +17,7 @@ interface PasswordStoreProps {
   user: User
 }
 
-const KeyContext = React.createContext<CryptoKeyPair | null>(null)
+export const KeyContext = React.createContext<CryptoKeyPair | null>(null)
 
 // Used to retrieve all the stored passwords
 // from firebase and display them in a list once the master password is entered

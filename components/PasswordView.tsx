@@ -4,13 +4,11 @@ import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 import type { Password } from "~models/Passwords"
 
 interface PasswordViewProps {
-  refId: string
-  setOpenPassword: React.Dispatch<React.SetStateAction<string>>
+  password: Password
+  setOpenPassword: React.Dispatch<React.SetStateAction<Password | null>>
 }
 
-const PasswordView = ({ refId, setOpenPassword }: PasswordViewProps) => {
-  const { data: password } = useFirestoreDoc<Password>(`passwords/${refId}`)
-
+const PasswordView = ({ password, setOpenPassword }: PasswordViewProps) => {
   const showPassword = (e: React.MouseEvent<HTMLButtonElement>) => {
     const input = document.querySelector(
       "input[type=password]"
@@ -100,9 +98,9 @@ const PasswordView = ({ refId, setOpenPassword }: PasswordViewProps) => {
         <dt>URL</dt>
         <dd>{password?.url} </dd>
         <dt>Created At</dt>
-        <dd>{password?.createdAt.toDate().toLocaleString()}</dd>
+        <dd>{password?.createdAt.toLocaleString()}</dd>
         <dt>Updated At</dt>
-        <dd>{password?.updatedAt.toDate().toLocaleString()}</dd>
+        <dd>{password?.updatedAt.toLocaleString()}</dd>
       </dl>
       <button onClick={() => setOpenPassword(null)}>Back</button>
     </div>

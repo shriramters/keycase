@@ -1,13 +1,11 @@
-import type { Timestamp } from 'firebase/firestore'
-
 export interface Password {
   name: string
   username: string
   password: string
   url: string
   notes: string
-  createdAt: Timestamp
-  updatedAt: Timestamp
+  createdAt: Date
+  updatedAt: Date
 }
 
 // array of passwords referenced by id

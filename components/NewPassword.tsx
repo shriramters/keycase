@@ -1,8 +1,10 @@
-import { Timestamp } from "firebase/firestore"
 import React from "react"
 
 import { useFirestoreDoc } from "~firebase/use-firestore-doc"
-import type { Password, PasswordsFirebaseDocument } from "~models/Passwords"
+import type { Password } from "~models/Passwords"
+
+import { KeyContext } from "./PasswordStore"
+import { ab2str, rsa_encrypt } from "./cryptography"
 
 interface NewPasswordProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -10,35 +12,33 @@ interface NewPasswordProps {
 }
 
 const NewPassword = ({ setOpen, addPasswordToList }: NewPasswordProps) => {
-  const randomid =
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
+  const rsaPair = React.useContext(KeyContext)
 
-  const { setData: setPassword } = useFirestoreDoc<Password>(
-    `passwords/${randomid}`
-  )
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
     const formData = new FormData(form)
     const data = Object.fromEntries(formData.entries())
 
     // create Password Document
-    const newPasswordDoc = {
+    const newPasswordDoc: Password = {
       name: data.name.toString(),
       username: data.username.toString(),
       password: data.password.toString(),
       url: data.url.toString(),
       notes: data.notes.toString(),
-      createdAt: Timestamp.fromDate(new Date()),
-      updatedAt: Timestamp.fromDate(new Date())
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
-    setPassword(newPasswordDoc)
 
-    // add password id to password list for user
-    addPasswordToList(randomid)
+    // encrypt password
+    const encryptedPassword = await rsa_encrypt(
+      JSON.stringify(newPasswordDoc),
+      rsaPair.publicKey
+    )
 
+    // add to list after base64 encoding
+    addPasswordToList(window.btoa(ab2str(encryptedPassword)))
     setOpen(false)
   }
 
