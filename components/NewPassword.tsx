@@ -8,7 +8,7 @@ import { ab2str, rsa_encrypt } from "./cryptography"
 
 interface NewPasswordProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  addPasswordToList: (_data: string) => void
+  addPasswordToList: (_data: Password) => void
 }
 
 const NewPassword = ({ setOpen, addPasswordToList }: NewPasswordProps) => {
@@ -31,14 +31,7 @@ const NewPassword = ({ setOpen, addPasswordToList }: NewPasswordProps) => {
       updatedAt: new Date()
     }
 
-    // encrypt password
-    const encryptedPassword = await rsa_encrypt(
-      JSON.stringify(newPasswordDoc),
-      rsaPair.publicKey
-    )
-
-    // add to list after base64 encoding
-    addPasswordToList(window.btoa(ab2str(encryptedPassword)))
+    addPasswordToList(newPasswordDoc)
     setOpen(false)
   }
 

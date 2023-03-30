@@ -8,7 +8,7 @@ import NewPassword from "./NewPassword"
 import PasswordListItem from "./PasswordListItem"
 import { KeyContext } from "./PasswordStore"
 import PasswordView from "./PasswordView"
-import { rsa_decrypt, str2ab } from "./cryptography"
+import { ab2str, rsa_decrypt, rsa_encrypt, str2ab } from "./cryptography"
 
 interface PasswordListProps {
   user: User
@@ -23,13 +23,19 @@ const PasswordList = ({ user }: PasswordListProps) => {
     user?.uid && `passwords/${user.uid}`
   )
 
-  function addPasswordToList(_data: string) {
+  async function addPasswordToList(passwordDoc: Password) {
     if (passwordList) {
+      // encrypt password
+      const encryptedPassword = await rsa_encrypt(
+        JSON.stringify(passwordDoc),
+        rsaPair.publicKey
+      )
       const passwordsArray = passwordList.passwords
-      passwordsArray.push(_data)
+      passwordsArray.push(window.btoa(ab2str(encryptedPassword)))
       setPasswordList({
         passwords: passwordsArray
       })
+      setPasswords((prev) => [...prev, passwordDoc])
     }
   }
 
@@ -61,12 +67,12 @@ const PasswordList = ({ user }: PasswordListProps) => {
           )
         })
     }
-  }, [isListReady, addNew])
+  }, [isListReady])
 
   const [openPassword, setOpenPassword] = React.useState<Password | null>(null)
 
   return (
-    <div>
+    <div id="password-list">
       {addNew ? (
         <NewPassword
           setOpen={setAddNew}
