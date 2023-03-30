@@ -100,7 +100,6 @@ const PasswordList = ({ user }: PasswordListProps) => {
               {passwords
                 .filter((password) => {
                   if (searchQuery === "") return true
-                  alert(password.url)
                   const website = password.url.split("://")[1].split("/")[0]
                   return (
                     website.includes(searchQuery) ||
