@@ -1,6 +1,5 @@
-import React from "react"
+import type React from "react"
 
-import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 import type { Password } from "~models/Passwords"
 
 interface PasswordViewProps {
@@ -94,7 +93,7 @@ const PasswordView = ({ password, setOpenPassword }: PasswordViewProps) => {
           </>
         </dd>
         <dt>Notes</dt>
-        <dd>{password?.notes}</dd>
+        <dd>{password?.notes == "" ? "No Notes" : password?.notes}</dd>
         <dt>URL</dt>
         <dd>{password?.url} </dd>
         <dt>Created At</dt>
