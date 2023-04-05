@@ -82,7 +82,7 @@ async function makeAuthDocument(masterPassword: string) {
   )
 
   // wrap the private key with the derived key
-  const encryptedPrivateKey = await wrapKey(key, rsaPair.privateKey, iv)
+  const encryptedPrivateKey = await wrapKey(rsaPair.privateKey, key, iv)
 
   const hashedPassword = await sha256hash(
     masterPassword,

@@ -8,7 +8,7 @@ export interface Password {
   updatedAt: Date
 }
 
-// array of passwords referenced by id
+// array of encrypted password strings
 export interface PasswordsFirebaseDocument {
   passwords: Array<string>
 }

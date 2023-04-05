@@ -1,10 +1,8 @@
 import React from "react"
 
-import { useFirestoreDoc } from "~firebase/use-firestore-doc"
 import type { Password } from "~models/Passwords"
 
 import { KeyContext } from "./PasswordStore"
-import { ab2str, rsa_encrypt } from "./cryptography"
 
 interface NewPasswordProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -42,10 +40,15 @@ const NewPassword = ({ setOpen, addPasswordToList }: NewPasswordProps) => {
         <button onClick={() => setOpen(false)}>Back</button>
       </div>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" name="name" />
-        <input type="text" placeholder="Username" name="username" />
-        <input type="password" placeholder="Password" name="password" />
-        <input type="url" placeholder="URL" name="url" />
+        <input type="text" placeholder="Name" name="name" required />
+        <input type="text" placeholder="Username" name="username" required />
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          required
+        />
+        <input type="url" placeholder="URL" name="url" required />
         <input type="text" placeholder="Notes" name="notes" />
         <button type="submit">Submit</button>
       </form>
