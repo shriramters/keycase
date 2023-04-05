@@ -1,6 +1,7 @@
 import React from "react"
 
-import type { Password } from "../models/Passwords"
+import type { Password } from "~models/Passwords"
+
 import { KeyContext } from "./PasswordStore"
 
 interface NewPasswordProps {
@@ -41,7 +42,12 @@ const NewPassword = ({ setOpen, addPasswordToList }: NewPasswordProps) => {
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Name" name="name" required />
         <input type="text" placeholder="Username" name="username" required />
-        <input type="password" placeholder="Password" name="password" required />
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          required
+        />
         <input type="url" placeholder="URL" name="url" required />
         <input type="text" placeholder="Notes" name="notes" />
         <button type="submit">Submit</button>
