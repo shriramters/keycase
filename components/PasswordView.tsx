@@ -5,9 +5,14 @@ import type { Password } from "~models/Passwords"
 interface PasswordViewProps {
   password: Password
   setOpenPassword: React.Dispatch<React.SetStateAction<Password | null>>
+  deletePassword: (password: Password) => void
 }
 
-const PasswordView = ({ password, setOpenPassword }: PasswordViewProps) => {
+const PasswordView = ({
+  password,
+  setOpenPassword,
+  deletePassword
+}: PasswordViewProps) => {
   const showPassword = (e: React.MouseEvent<HTMLButtonElement>) => {
     const input = document.querySelector(
       "input[type=password]"
@@ -101,7 +106,12 @@ const PasswordView = ({ password, setOpenPassword }: PasswordViewProps) => {
         <dt>Updated At</dt>
         <dd>{password?.updatedAt.toLocaleString()}</dd>
       </dl>
-      <button onClick={() => setOpenPassword(null)}>Back</button>
+      <div className="action-bar">
+        <button className="danger" onClick={() => deletePassword(password)}>
+          Delete
+        </button>
+        <button onClick={() => setOpenPassword(null)}>Back</button>
+      </div>
     </div>
   )
 }
