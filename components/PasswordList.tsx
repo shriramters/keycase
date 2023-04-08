@@ -71,6 +71,20 @@ const PasswordList = ({ user }: PasswordListProps) => {
 
   const [openPassword, setOpenPassword] = React.useState<Password | null>(null)
 
+  const deletePassword = async (passwordDoc: Password) => {
+    const passwordIdx = passwords.findIndex((pass) => pass === passwordDoc)
+    const filteredPasswords = passwordList.passwords.filter(
+      (_, idx) => idx !== passwordIdx
+    ) // remove from array based on index
+
+    setPasswordList({
+      passwords: filteredPasswords
+    }) // remove from firestore
+
+    setPasswords((prev) => prev.filter((password) => password !== passwordDoc)) // remove from state
+    setOpenPassword(null)
+  }
+
   return (
     <div id="password-list">
       {addNew ? (
@@ -84,6 +98,7 @@ const PasswordList = ({ user }: PasswordListProps) => {
             <PasswordView
               password={openPassword}
               setOpenPassword={setOpenPassword}
+              deletePassword={deletePassword}
             />
           ) : (
             <>
