@@ -9,9 +9,12 @@ import type { AuthFirebaseDocument } from "~models/AuthData"
 
 import "./style.css"
 
+import type { Theme } from "~components/theme"
+import { themes } from "~components/theme"
+
 export const ThemeContext = createContext<{
-  theme: "sakura" | "sakura-night"
-  setTheme: React.Dispatch<React.SetStateAction<"sakura" | "sakura-night">>
+  theme: Theme
+  setTheme: React.Dispatch<React.SetStateAction<Theme>>
 }>(null)
 
 export default function IndexPopup() {
@@ -34,7 +37,7 @@ export default function IndexPopup() {
   }, [isAuthReady])
 
   // theme localstorage
-  const [theme, setTheme] = useState<"sakura" | "sakura-night">(null)
+  const [theme, setTheme] = useState<Theme>(null)
 
   const addClassToBody = (className: string) => {
     document.body.classList.add(className)
@@ -45,22 +48,19 @@ export default function IndexPopup() {
   useEffect(() => {
     const saved_theme = localStorage.getItem("theme")
     if (saved_theme) {
-      setTheme(saved_theme as "sakura" | "sakura-night")
+      setTheme(saved_theme as Theme)
     }
   }, [])
 
   useEffect(() => {
     if (theme) {
-      setTheme(theme as "sakura" | "sakura-night")
+      setTheme(theme as Theme)
       localStorage.setItem("theme", theme)
-      if (theme === "sakura") {
-        addClassToBody("sakura")
-        removeClassFromBody("sakura-night")
-      }
-      if (theme === "sakura-night") {
-        addClassToBody("sakura-night")
-        removeClassFromBody("sakura")
-      }
+
+      themes.forEach((theme) => {
+        removeClassFromBody(theme)
+      })
+      addClassToBody(theme)
     }
   }, [theme])
 

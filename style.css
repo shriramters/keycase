@@ -19,6 +19,15 @@ body.sakura-night {
   --accent-color-hover: thistle;
 }
 
+/* tokyo night theme */
+body.tokyo-night {
+  --text-color: #a9b1d6;
+  --surface: #1a1b26;
+  --surface-hover: #2d2e43;
+  --accent-color: #bb9af7;
+  --accent-color-hover: #c0caf5;
+}
+
 body {
   background-color: var(--surface);
   color: var(--text-color);
@@ -87,7 +96,7 @@ button {
   font-size: 0.75rem;
   cursor: pointer;
   background-color: var(--accent-color);
-  color: var(--text-color);
+  color: var(--surface);
 }
 
 button:hover {
