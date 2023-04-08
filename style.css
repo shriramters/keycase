@@ -6,6 +6,7 @@
   --surface-hover: #eee;
   --accent-color: thistle;
   --accent-color-hover: plum;
+  --danger-color: palevioletred;
   --font-size: 75%;
 }
 
@@ -17,6 +18,7 @@ body.sakura-night {
   --surface-hover: #616c99;
   --accent-color: plum;
   --accent-color-hover: thistle;
+  --danger-color: palevioletred;
 }
 
 /* tokyo night theme */
@@ -26,6 +28,7 @@ body.tokyo-night {
   --surface-hover: #2d2e43;
   --accent-color: #bb9af7;
   --accent-color-hover: #c0caf5;
+  --danger-color: #f7768e;
 }
 
 body {
@@ -180,7 +183,7 @@ select {
 }
 
 .danger {
-  background-color: palevioletred;
+  background-color: var(--danger-color);
 }
 
 .action-bar {
