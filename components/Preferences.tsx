@@ -2,6 +2,9 @@ import React from "react"
 
 import { ThemeContext } from "~popup"
 
+import type { Theme } from "./theme"
+import { themes } from "./theme"
+
 const Preferences = ({
   openPreferencesPage
 }: {
@@ -22,11 +25,10 @@ const Preferences = ({
             name="theme"
             id="theme"
             value={theme}
-            onChange={(e) =>
-              setTheme(e.target.value as "sakura" | "sakura-night")
-            }>
-            <option>sakura</option>
-            <option>sakura-night</option>
+            onChange={(e) => setTheme(e.target.value as Theme)}>
+            {themes.map((theme, index) => (
+              <option key={index}>{theme}</option>
+            ))}
           </select>
         </dd>
       </dl>
